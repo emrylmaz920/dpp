@@ -6,7 +6,7 @@
 <title>Dijital Ürün Pasaportu – Prototip</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;400;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
   :root{
@@ -160,6 +160,8 @@
   .hero .art.photo{width:min(240px,66vw);height:auto;aspect-ratio:1/1;padding:0;overflow:hidden;background:#eeeeee;
     border:1px solid rgba(227,196,126,.35);border-radius:26px;box-shadow:0 24px 60px -20px rgba(0,0,0,.6),0 0 50px rgba(227,196,126,.10);margin-top:30px}
   .hero .art.photo img{width:100%;height:100%;object-fit:cover;display:block}
+  /* Marka adı: InsideOut (büyük-küçük harf korunur) */
+  header.top .brandmark{text-transform:none;letter-spacing:.03em;font-size:26px;font-weight:200;line-height:1;color:#ffffff}
 </style>
 </head>
 <body>
@@ -178,7 +180,7 @@ const PRODUCTS = {
     type: "sock",
     photo: SOCK_PHOTO,
     name: "Organik Pamuk Bebek Çorabı",
-    brand: "Örnek Marka · Bebek Koleksiyonu",
+    brand: "InsideOut · Bebek Koleksiyonu",
     group: "Çorap › Bebek çorabı (örme)",
     description: "Yenidoğan ve bebekler için yumuşak, dikişsiz burunlu, kaydırmaz tabanlı günlük çorap. 3'lü paket içinde satılır.",
     size: "6–12 ay (EU 17–18)",
@@ -230,7 +232,7 @@ const PRODUCTS = {
   "tisort-002": {
     type: "tshirt",
     name: "Basic Bisiklet Yaka Tişört",
-    brand: "Örnek Marka · Essentials",
+    brand: "InsideOut · Essentials",
     group: "Üst giyim › Tişört (örme)",
     description: "Günlük kullanım için regular kesim, bisiklet yaka, kısa kollu tişört.",
     size: "M",
