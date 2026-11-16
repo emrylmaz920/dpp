@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dijital Ürün Pasaportu – Prototip</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+  :root{
+    --bg:#f5f3ee; --card:#ffffff; --ink:#1d2321; --muted:#6b726f; --line:#e6e2d9;
+    --accent:#1f5f4a; --accent-soft:#e3efe9; --warn:#b4632b;
+    --r:16px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:Manrope,system-ui,-apple-system,sans-serif;font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:560px;margin:0 auto;padding:0 16px 40px}
+  header.top{padding:20px 0 8px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .badge{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--accent);background:var(--accent-soft);padding:6px 10px;border-radius:999px}
+  .badge svg{width:14px;height:14px}
+  .verified{font-size:12px;color:var(--muted)}
+  .hero{background:var(--card);border-radius:var(--r);padding:20px;margin-top:8px;display:flex;gap:16px;align-items:center;border:1px solid var(--line)}
+  .hero .art{flex:0 0 96px;height:96px;border-radius:14px;display:grid;place-items:center;background:#efece4}
+  .hero .art svg{width:70px;height:70px}
+  .hero h1{font-size:21px;line-height:1.2;margin:0 0 4px;font-weight:800;letter-spacing:-.01em}
+  .hero .brand{color:var(--muted);font-size:13px;margin:0 0 8px}
+  .chip{display:inline-block;font-size:12px;font-weight:600;background:#f0ede6;border-radius:999px;padding:4px 10px;color:#3b423f}
+  .facts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+  .fact{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+  .fact .k{font-size:12px;color:var(--muted);font-weight:600}
+  .fact .v{font-weight:700;margin-top:2px;display:flex;align-items:center;gap:8px}
+  .swatch{width:16px;height:16px;border-radius:50%;border:1px solid rgba(0,0,0,.15);flex:none}
+  nav.tabs{position:sticky;top:0;z-index:5;background:var(--bg);margin:16px -16px 0;padding:10px 16px;display:flex;gap:8px;overflow-x:auto;scrollbar-width:none}
+  nav.tabs::-webkit-scrollbar{display:none}
+  nav.tabs button{flex:none;border:1px solid var(--line);background:var(--card);color:var(--ink);font:600 13px Manrope,sans-serif;padding:8px 14px;border-radius:999px;cursor:pointer}
+  nav.tabs button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+  section{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin-top:12px;scroll-margin-top:64px}
+  section h2{font-size:16px;margin:0 0 12px;display:flex;align-items:center;gap:8px;font-weight:800}
+  section h2 .n{width:26px;height:26px;border-radius:8px;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font-size:13px}
+  p{margin:0 0 10px}
+  .muted{color:var(--muted)}
+  dl.rows{margin:0}
+  dl.rows div{display:flex;justify-content:space-between;gap:16px;padding:9px 0;border-top:1px solid var(--line)}
+  dl.rows div:first-child{border-top:0}
+  dl.rows dt{color:var(--muted);font-size:13.5px}
+  dl.rows dd{margin:0;font-weight:600;text-align:right;font-size:13.5px}
+  dl.rows.stack div{display:block}
+  dl.rows.stack dd{text-align:left;font-weight:500;margin-top:2px}
+  .compbar{display:flex;height:14px;border-radius:999px;overflow:hidden;margin:4px 0 12px}
+  .legend{display:grid;gap:8px}
+  .legend .item{display:flex;align-items:flex-start;gap:10px}
+  .legend .dot{width:12px;height:12px;border-radius:4px;margin-top:4px;flex:none}
+  .legend .pct{margin-left:auto;font-weight:800}
+  .legend .sub{font-size:12.5px;color:var(--muted)}
+  .care{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:10px}
+  .care .c{border:1px solid var(--line);border-radius:12px;padding:10px 6px;text-align:center;font-size:12px;line-height:1.3}
+  .care svg{width:40px;height:40px;display:block;margin:0 auto 6px;color:var(--ink)}
+  .tip{background:#f7f5f0;border-radius:12px;padding:10px 12px;font-size:13.5px;margin-top:12px}
+  ol.chain{list-style:none;margin:0;padding:0;position:relative}
+  ol.chain li{position:relative;padding:0 0 18px 34px}
+  ol.chain li:last-child{padding-bottom:0}
+  ol.chain li::before{content:"";position:absolute;left:10px;top:22px;bottom:-2px;width:2px;background:var(--line)}
+  ol.chain li:last-child::before{display:none}
+  ol.chain .pin{position:absolute;left:0;top:0;width:22px;height:22px;border-radius:50%;background:var(--accent);color:#fff;font-size:11px;font-weight:800;display:grid;place-items:center}
+  ol.chain .st{font-weight:800}
+  ol.chain .wh{font-size:13.5px}
+  ol.chain .who{font-size:12.5px;color:var(--muted)}
+  .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+  .kpi{background:#f7f5f0;border-radius:12px;padding:10px}
+  .kpi .big{font-size:20px;font-weight:800;letter-spacing:-.02em}
+  .kpi .u{font-size:11.5px;color:var(--muted);font-weight:600}
+  .bars{display:grid;gap:8px;margin:6px 0 4px}
+  .bar{display:grid;grid-template-columns:110px 1fr 54px;gap:8px;align-items:center;font-size:13px}
+  .bar .track{height:10px;background:#f0ede6;border-radius:999px;overflow:hidden}
+  .bar .fill{height:100%;background:var(--accent);border-radius:999px}
+  .bar .val{text-align:right;font-weight:700;font-variant-numeric:tabular-nums}
+  .certs{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 12px}
+  .cert{border:1.5px solid var(--accent);color:var(--accent);border-radius:10px;padding:6px 10px;font-size:12.5px;font-weight:700}
+  h3{font-size:13.5px;margin:16px 0 8px;font-weight:800}
+  .note{font-size:12px;color:var(--muted);margin-top:8px}
+  footer{margin-top:16px;font-size:12.5px;color:var(--muted)}
+  footer .qr{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;text-align:center;margin-bottom:12px}
+  footer .qr img,footer .qr canvas{width:160px;height:160px;image-rendering:pixelated}
+  footer .other a{color:var(--accent);font-weight:700}
+  .demo{background:#fff4e8;color:#7a4316;border-radius:12px;padding:10px 12px;font-size:12.5px;margin-top:12px}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+
+<script>
+/* ============================================================
+   ÜRÜN VERİLERİ — yeni ürün eklemek için bu nesneye bir kayıt ekleyin.
+   Anahtar (ör. "bebek-corap-001") QR adresinin sonundaki #… kısmıdır.
+   Tüm veriler TEMSİLİDİR (prototip içindir).
+   ============================================================ */
+const PRODUCTS = {
+  "bebek-corap-001": {
+    type: "sock",
+    name: "Organik Pamuk Bebek Çorabı",
+    brand: "Örnek Marka · Bebek Koleksiyonu",
+    group: "Çorap › Bebek çorabı (örme)",
+    description: "Yenidoğan ve bebekler için yumuşak, dikişsiz burunlu, kaydırmaz tabanlı günlük çorap. 3'lü paket içinde satılır.",
+    size: "6–12 ay (EU 17–18)",
+    gender: "Unisex",
+    color: { name: "Ekru", hex: "#eee6d3" },
+    season: "Dört mevsim",
+    article: "BC-2611-ECR",
+    passport: { id: "DPP-TR-2026-000123", gtin: "8690000000017", lot: "LOT-2611-A", produced: "Kasım 2026", manufacturer: "Örnek Tekstil San. A.Ş., İstanbul, Türkiye", version: "1.0", updated: "16.11.2026" },
+    composition: [
+      { name: "Organik pamuk", pct: 80, color: "#c9b48a", sub: "Ana gövde · Ne 30/1 penye" },
+      { name: "Poliamid (geri dönüştürülmüş)", pct: 18, color: "#4f7a6b", sub: "Taban ve topuk takviyesi" },
+      { name: "Elastan", pct: 2, color: "#2c3a36", sub: "Konç lastiği" }
+    ],
+    materialInfo: [
+      ["Kumaş yapısı", "Düz örme (tek plaka), havlu taban"],
+      ["Makine", "Çorap makinesi, 3¾\" · 144 iğne"],
+      ["Gramaj", "≈ 14 g / çift"],
+      ["Burun dikişi", "Dikişsiz (makinede kapama)"],
+      ["Taban", "Silikon kaydırmaz baskı"]
+    ],
+    care: [
+      { icon: "wash30gentle", text: "30 °C hassas yıkama" },
+      { icon: "noBleach", text: "Ağartıcı kullanmayın" },
+      { icon: "tumble1", text: "Düşük ısıda kurutma" },
+      { icon: "iron0", text: "Ütülemeyin" },
+      { icon: "noDryClean", text: "Kuru temizleme yok" }
+    ],
+    careTip: "Ters çevirerek, benzer renklerle yıkayın. Yumuşatıcı kaydırmaz tabanın ömrünü kısaltabilir.",
+    supply: [
+      { stage: "Lif üretimi", what: "Organik pamuk", where: "Şanlıurfa, Türkiye", who: "Sertifikalı üretici kooperatifi (örnek)" },
+      { stage: "İplik eğirme", what: "Ne 30/1 penye ring iplik", where: "Kahramanmaraş, Türkiye", who: "Örnek İplik A.Ş." },
+      { stage: "Örme", what: "Çorap örme ve burun kapama", where: "İstanbul, Türkiye", who: "Örnek Tekstil San. A.Ş." },
+      { stage: "Boya & apre", what: "Reaktif boyama, yumuşatma", where: "Tekirdağ (Çorlu), Türkiye", who: "Örnek Boya Terbiye Ltd." },
+      { stage: "Paketleme", what: "Formlama, etiketleme, 3'lü paket", where: "İstanbul, Türkiye", who: "Örnek Tekstil San. A.Ş." }
+    ],
+    sustain: {
+      co2: 0.24, co2unit: "kg CO₂e / çift",
+      water: 95, recycled: 18,
+      breakdown: [
+        ["Hammadde", 0.06], ["İplik", 0.05], ["Örme", 0.03], ["Boya & apre", 0.07], ["Konfeksiyon", 0.02], ["Nakliye", 0.01]
+      ],
+      certs: ["GOTS (organik pamuk)", "OEKO-TEX® Standard 100 · Sınıf I", "GRS (geri dön. poliamid)"],
+      eol: "Ürün tekstil geri dönüşüm kutularına bırakılabilir. Pamuk ağırlıklı olduğu için mekanik geri dönüşüme uygundur; elastan oranı düşüktür (%2).",
+      durability: "Topuk ve burun bölgesi poliamid takviyelidir. 50 yıkama sonrası boyut değişimi ≤ %3 (iç test).",
+      packaging: "Karton bant ambalaj, %100 geri dönüştürülmüş kâğıt; plastik askı yok."
+    }
+  },
+
+  "tisort-002": {
+    type: "tshirt",
+    name: "Basic Bisiklet Yaka Tişört",
+    brand: "Örnek Marka · Essentials",
+    group: "Üst giyim › Tişört (örme)",
+    description: "Günlük kullanım için regular kesim, bisiklet yaka, kısa kollu tişört.",
+    size: "M",
+    gender: "Erkek",
+    color: { name: "Lacivert", hex: "#22304f" },
+    season: "İlkbahar / Yaz 2027",
+    article: "TS-0457-NVY",
+    passport: { id: "DPP-TR-2026-000457", gtin: "8690000000048", lot: "LOT-2610-C", produced: "Ekim 2026", manufacturer: "Örnek Konfeksiyon A.Ş., İstanbul, Türkiye", version: "1.0", updated: "16.11.2026" },
+    composition: [
+      { name: "Organik pamuk", pct: 70, color: "#c9b48a", sub: "Ana kumaş" },
+      { name: "Geri dönüştürülmüş pamuk", pct: 30, color: "#4f7a6b", sub: "Kesim atığından (pre-consumer)" }
+    ],
+    materialInfo: [
+      ["Kumaş yapısı", "Süprem (tek plaka örme)"],
+      ["İplik", "Ne 30/1 penye"],
+      ["Gramaj", "160 g/m²"],
+      ["Yaka", "1×1 ribana"],
+      ["Kesim", "Regular fit"]
+    ],
+    care: [
+      { icon: "wash30", text: "30 °C yıkama" },
+      { icon: "noBleach", text: "Ağartıcı kullanmayın" },
+      { icon: "tumble1", text: "Düşük ısıda kurutma" },
+      { icon: "iron2", text: "Orta ısıda ütü" },
+      { icon: "dryCleanP", text: "Kuru temizleme (P)" }
+    ],
+    careTip: "İlk yıkamalarda koyu renklerle ayrı yıkayın. Baskılı bölgeyi tersten ütüleyin.",
+    supply: [
+      { stage: "Lif üretimi", what: "Organik pamuk", where: "Aydın, Türkiye", who: "Sertifikalı üretici (örnek)" },
+      { stage: "Geri dönüşüm", what: "Kesim atığından lif geri kazanımı", where: "Uşak, Türkiye", who: "Örnek Geri Dönüşüm Ltd." },
+      { stage: "İplik eğirme", what: "Ne 30/1 penye karışım iplik", where: "Kahramanmaraş, Türkiye", who: "Örnek İplik A.Ş." },
+      { stage: "Örme", what: "Süprem kumaş örme", where: "Bursa, Türkiye", who: "Örnek Örme San." },
+      { stage: "Boya & apre", what: "Reaktif boyama, kompaktör", where: "Tekirdağ (Çorlu), Türkiye", who: "Örnek Boya Terbiye Ltd." },
+      { stage: "Konfeksiyon", what: "Kesim, dikim, ütü-paket", where: "İstanbul, Türkiye", who: "Örnek Konfeksiyon A.Ş." }
+    ],
+    sustain: {
+      co2: 5.2, co2unit: "kg CO₂e / adet",
+      water: 1650, recycled: 30,
+      breakdown: [
+        ["Hammadde", 1.2], ["İplik", 1.1], ["Örme", 0.6], ["Boya & apre", 1.6], ["Konfeksiyon", 0.4], ["Nakliye", 0.3]
+      ],
+      certs: ["OCS (organik içerik)", "GRS (geri dön. pamuk)", "OEKO-TEX® Standard 100"],
+      eol: "Tek tip lif (%100 pamuk) olduğu için geri dönüşüme çok uygundur. Kullanılmış tekstil toplama noktalarına bırakılabilir.",
+      durability: "Boncuklanma (pilling) dayanımı: 4 (ISO 12945-2). Yıkamada boyut değişimi ≤ %4.",
+      packaging: "Tekli poşet: %100 geri dönüştürülmüş LDPE."
+    }
+  }
+};
+
+
+
+/* ---------- Bakım sembolleri (ISO 3758 tarzı, basitleştirilmiş) ---------- */
+const S = 'fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"';
+const tub = `<path ${S} d="M4 11 L8.5 30 H31.5 L36 11"/><path ${S} d="M4 11 q4 -4 8 0 t8 0 t8 0 t8 0"/>`;
+const X = (a,b,c,d)=>`<path ${S} d="M${a} ${b} L${c} ${d} M${c} ${b} L${a} ${d}"/>`;
+const dots = (n,cx,cy,gap=5)=>Array.from({length:n},(_,i)=>`<circle cx="${cx+(i-(n-1)/2)*gap}" cy="${cy}" r="1.8" fill="currentColor"/>`).join('');
+const ironPath = `<path ${S} d="M4 30 H36 V27 C36 19 31 14 23 14 H11 C8 18 5.5 24 4 30 Z"/>`;
+const ICONS = {
+  wash30: `<svg viewBox="0 0 40 40">${tub}<text x="20" y="25.5" text-anchor="middle" font-size="10" font-weight="700" fill="currentColor" font-family="Manrope,sans-serif">30</text></svg>`,
+  wash30gentle: `<svg viewBox="0 0 40 40">${tub}<text x="20" y="25.5" text-anchor="middle" font-size="10" font-weight="700" fill="currentColor" font-family="Manrope,sans-serif">30</text><path ${S} d="M8 35 H32"/></svg>`,
+  noBleach: `<svg viewBox="0 0 40 40"><path ${S} d="M20 5 L36 33 H4 Z"/>${X(9,11,31,33)}</svg>`,
+  tumble1: `<svg viewBox="0 0 40 40"><rect ${S} x="5" y="5" width="30" height="30" rx="2"/><circle ${S} cx="20" cy="20" r="11"/>${dots(1,20,20)}</svg>`,
+  iron0: `<svg viewBox="0 0 40 40">${ironPath}${X(8,8,32,34)}</svg>`,
+  iron2: `<svg viewBox="0 0 40 40">${ironPath}${dots(2,21,23)}</svg>`,
+  noDryClean: `<svg viewBox="0 0 40 40"><circle ${S} cx="20" cy="20" r="13"/>${X(9,9,31,31)}</svg>`,
+  dryCleanP: `<svg viewBox="0 0 40 40"><circle ${S} cx="20" cy="20" r="13"/><text x="20" y="25" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor" font-family="Manrope,sans-serif">P</text></svg>`
+};
+
+/* ---------- Ürün görselleri ---------- */
+function art(p){
+  const c = p.color.hex;
+  if (p.type === "sock") return `<svg viewBox="0 0 80 80"><path d="M30 6 H50 V40 C50 44 52 47 56 50 L66 57 C72 61 72 70 66 73 C62 76 57 75 53 72 L33 58 C29 55 30 52 30 48 Z" fill="${c}" stroke="#2c3a36" stroke-width="2" stroke-linejoin="round"/><path d="M30 14 H50" stroke="#2c3a36" stroke-width="2"/><path d="M30 10 H50" stroke="#2c3a36" stroke-width="1" opacity=".5"/></svg>`;
+  return `<svg viewBox="0 0 80 80"><path d="M28 10 C31 15 49 15 52 10 L68 18 L62 32 L56 29 V70 H24 V29 L18 32 L12 18 Z" fill="${c}" stroke="#2c3a36" stroke-width="2" stroke-linejoin="round"/><path d="M33 12 C35 17 45 17 47 12" fill="none" stroke="#fff" stroke-width="1.5" opacity=".6"/></svg>`;
+}
+
+const esc = s => String(s).replace(/[&<>"]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+const fmt = (n, d) => n.toLocaleString('tr-TR', { minimumFractionDigits: d, maximumFractionDigits: d });
+
+function render(){
+  const ids = Object.keys(PRODUCTS);
+  const key = (location.hash || '').slice(1);
+  const id = PRODUCTS[key] ? key : ids[0];
+  const p = PRODUCTS[id];
+  const s = p.sustain;
+  const maxB = Math.max(...s.breakdown.map(b => b[1]));
+  const dec = s.co2 < 1 ? 2 : 1;
+
+  document.title = p.name + ' – Dijital Ürün Pasaportu';
+  document.getElementById('app').innerHTML = `
+    <header class="top">
+      <span class="badge"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="5" height="5"/><rect x="9" y="2" width="5" height="5"/><rect x="2" y="9" width="5" height="5"/><path d="M9 9h2v2H9zM13 13h1M11 13h0"/></svg>Dijital Ürün Pasaportu</span>
+      <span class="verified">Sürüm ${esc(p.passport.version)} · ${esc(p.passport.updated)}</span>
+    </header>
+
+    <div class="hero">
+      <div class="art">${art(p)}</div>
+      <div>
+        <h1>${esc(p.name)}</h1>
+        <p class="brand">${esc(p.brand)}</p>
+        <span class="chip">${esc(p.group)}</span>
+      </div>
+    </div>
+
+    <div class="facts">
+      <div class="fact"><div class="k">Beden</div><div class="v">${esc(p.size)}</div></div>
+      <div class="fact"><div class="k">Cinsiyet</div><div class="v">${esc(p.gender)}</div></div>
+      <div class="fact"><div class="k">Renk</div><div class="v"><span class="swatch" style="background:${p.color.hex}"></span>${esc(p.color.name)}</div></div>
+      <div class="fact"><div class="k">Karbon ayak izi</div><div class="v">${fmt(s.co2,dec)} kg CO₂e</div></div>
+    </div>
+
+    <nav class="tabs" id="tabs">
+      <button data-t="urun">Ürün</button>
+      <button data-t="malzeme">Malzeme</button>
+      <button data-t="bakim">Bakım</button>
+      <button data-t="tedarik">Tedarik zinciri</button>
+      <button data-t="surdur">Sürdürülebilirlik</button>
+    </nav>
+
+    <section id="urun">
+      <h2><span class="n">1</span>Ürün bilgisi</h2>
+      <p>${esc(p.description)}</p>
+      <dl class="rows">
+        <div><dt>Ürün grubu</dt><dd>${esc(p.group)}</dd></div>
+        <div><dt>Model / artikel no</dt><dd>${esc(p.article)}</dd></div>
+        <div><dt>Beden</dt><dd>${esc(p.size)}</dd></div>
+        <div><dt>Cinsiyet</dt><dd>${esc(p.gender)}</dd></div>
+        <div><dt>Renk</dt><dd>${esc(p.color.name)}</dd></div>
+        <div><dt>Sezon</dt><dd>${esc(p.season)}</dd></div>
+      </dl>
+    </section>
+
+    <section id="malzeme">
+      <h2><span class="n">2</span>Malzeme ve bileşim</h2>
+      <div class="compbar">${p.composition.map(m => `<span style="width:${m.pct}%;background:${m.color}"></span>`).join('')}</div>
+      <div class="legend">
+        ${p.composition.map(m => `<div class="item"><span class="dot" style="background:${m.color}"></span><div><div><b>${esc(m.name)}</b></div><div class="sub">${esc(m.sub)}</div></div><span class="pct">%${m.pct}</span></div>`).join('')}
+      </div>
+      <h3>Materyal bilgisi</h3>
+      <dl class="rows">${p.materialInfo.map(r => `<div><dt>${esc(r[0])}</dt><dd>${esc(r[1])}</dd></div>`).join('')}</dl>
+    </section>
+
+    <section id="bakim">
+      <h2><span class="n">3</span>Etiket ve bakım talimatı</h2>
+      <div class="care">${p.care.map(c => `<div class="c">${ICONS[c.icon] || ''}${esc(c.text)}</div>`).join('')}</div>
+      <div class="tip">💡 ${esc(p.careTip)}</div>
+    </section>
+
+    <section id="tedarik">
+      <h2><span class="n">4</span>Tedarik zinciri</h2>
+      <ol class="chain">
+        ${p.supply.map((st, i) => `<li><span class="pin">${i + 1}</span><div class="st">${esc(st.stage)}</div><div class="wh">${esc(st.what)} · <b>${esc(st.where)}</b></div><div class="who">${esc(st.who)}</div></li>`).join('')}
+      </ol>
+    </section>
+
+    <section id="surdur">
+      <h2><span class="n">5</span>Sürdürülebilirlik</h2>
+      <div class="kpis">
+        <div class="kpi"><div class="big">${fmt(s.co2,dec)}</div><div class="u">${esc(s.co2unit)}</div></div>
+        <div class="kpi"><div class="big">${fmt(s.water,0)}</div><div class="u">L su kullanımı</div></div>
+        <div class="kpi"><div class="big">%${s.recycled}</div><div class="u">geri dön. içerik</div></div>
+      </div>
+      <h3>CO₂ ayak izinin aşamalara dağılımı</h3>
+      <div class="bars">
+        ${s.breakdown.map(b => `<div class="bar"><span>${esc(b[0])}</span><span class="track"><span class="fill" style="display:block;width:${(b[1] / maxB * 100).toFixed(1)}%"></span></span><span class="val">${fmt(b[1],2)}</span></div>`).join('')}
+      </div>
+      <p class="note">Değerler kg CO₂e cinsinden, beşikten fabrika çıkışına + nakliye kapsamında tahmini değerlerdir.</p>
+      <h3>Sertifikalar</h3>
+      <div class="certs">${s.certs.map(c => `<span class="cert">${esc(c)}</span>`).join('')}</div>
+      <dl class="rows stack">
+        <div><dt>Dayanıklılık</dt><dd>${esc(s.durability)}</dd></div>
+        <div><dt>Ambalaj</dt><dd>${esc(s.packaging)}</dd></div>
+        <div><dt>Kullanım sonu</dt><dd>${esc(s.eol)}</dd></div>
+      </dl>
+    </section>
+
+    <section>
+      <h2><span class="n">i</span>Pasaport bilgileri</h2>
+      <dl class="rows">
+        <div><dt>Pasaport no</dt><dd>${esc(p.passport.id)}</dd></div>
+        <div><dt>GTIN / barkod</dt><dd>${esc(p.passport.gtin)}</dd></div>
+        <div><dt>Parti / lot</dt><dd>${esc(p.passport.lot)}</dd></div>
+        <div><dt>Üretim tarihi</dt><dd>${esc(p.passport.produced)}</dd></div>
+        <div><dt>Üretici</dt><dd>${esc(p.passport.manufacturer)}</dd></div>
+      </dl>
+      <div class="demo">Bu sayfa bir prototiptir. Firma adları, sertifikalar ve sayısal değerler temsilidir.</div>
+    </section>
+
+    <footer>
+      <div class="qr" id="qrbox"><div id="qrcode" style="display:inline-block;padding:8px;background:#fff"></div><div>Bu ürünün QR kodu</div></div>
+      <div class="other">Diğer örnek ürünler: ${ids.filter(k => k !== id).map(k => `<a href="#${k}">${esc(PRODUCTS[k].name)}</a>`).join(' · ')}</div>
+    </footer>
+  `;
+
+  const tabs = document.getElementById('tabs');
+  tabs.addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    document.getElementById(b.dataset.t).scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+  const secs = ['urun','malzeme','bakim','tedarik','surdur'].map(x => document.getElementById(x));
+  const mark = () => {
+    let cur = secs[0].id;
+    for (const s of secs) if (s.getBoundingClientRect().top < 120) cur = s.id;
+    tabs.querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.t === cur));
+  };
+  window.onscroll = mark; mark();
+
+  // QR kodu, sayfa nerede yayınlanıyorsa o adrese göre üretilir
+  const url = location.href.split('#')[0] + '#' + id;
+  const box = document.getElementById('qrcode');
+  if (window.QRCode && box) {
+    new QRCode(box, { text: url, width: 160, height: 160, correctLevel: QRCode.CorrectLevel.M });
+  } else {
+    document.getElementById('qrbox').style.display = 'none';
+  }
+  window.scrollTo(0, 0);
+}
+
+window.addEventListener('hashchange', render);
+render();
+</script>
+</body>
+</html>
